@@ -3,362 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo sobre precaución en terremotos</title>
+    <title>SismoNauta | Preparación y Monitoreo</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="icon.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
+
     <header>
+        <div class="logo">
+            <span style="color: var(--terracota, #B75D46);">●</span> SismoNauta
+        </div>
+        
         <nav class="navbar">
-            <div class="container">
-                <div class="logo">
-                    <h1>🌍 Precaución en Terremotos</h1>
-                </div>
-                <ul class="nav-menu">
-                    <li><a href="#presentacion">Informacion Reciente</a></li>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#contenidos">Contenidos</a></li>
-                    <li><a href="#videos">Videos</a></li>
-                    <li><a href="#apoyo">Apoyo</a></li>
-                    <li><a href="#consejos">Consejos</a></li>
-                    <li><a href="#contactos">Contactos</a></li>
-                    <li><a href="#encuesta">Encuesta</a></li>
-                </ul>
-            </div>
+            <button class="menu-btn" id="menu-btn">☰</button>
+            <span class="logo" style="display: none;">SismoNauta</span>
         </nav>
+
+        <div class="sidebar" id="sidebar">
+            <button class="close-btn" id="close-btn">✖</button>
+            <a href="#monitoreo">Mapa Interactivo</a>
+            <a href="#info">Guía de Supervivencia</a>
+            <a href="#juegos">Centro de Preparación</a>
+        </div>
+        
+        <div class="overlay" id="overlay"></div>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h2>Todo sobre precaución en terremotos</h2>
-                <p>Información vital para estar preparado ante eventos sísmicos</p>
-                <a href="#contenidos" class="cta-button">Explorar contenidos</a>
-            </div>
-        </section>
+    <section id="inicio" class="hero">
+        <h1 class="reveal">¿ESTÁS PREPARADO PARA EL PRÓXIMO SISMO?</h1>
+        <p class="reveal" style="transition-delay: 0.2s;">Monitoreo en tiempo real y educación interactiva para salvar vidas en Colombia. La prevención está en tus manos.</p>
+        <div class="reveal" style="transition-delay: 0.4s; position: relative; z-index: 2;">
+            <a href="#monitoreo" class="btn btn-primary">Ver Mapa en Vivo</a>
+            <a href="#juegos" class="btn btn-secondary">Jugar y Aprender</a>
+        </div>
 
-        <!-- Presentación -->
-        <section id="presentacion" class="section">
-            <div class="container">
-                <h2>Informacion de Sismos Reciente</h2>
-                <div class="card">
-                    <p>En la siguiente pagina se puede observar la ultima informacion de sismos en la localidad de santander mostrando desde los sismos mas antiguos a los mas recientes
-                        <a href="https://www.volcanodiscovery.com/es/sismos/colombia/santander.html#:~:text=En%20las%20últimas%2024%20horas%2C%20Santander%20ha%20tenido%2017%20sismos,de%20magnitud%20inferior%20a%202">informacion sismica.</a>
-                        En esta pagina informate de la frecuencia en la que ocurren los terremotos en santander para que puedas tener mas conocimiento en este tema
-                    </p>
+        <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="onda-suave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use xlink:href="#onda-suave" x="48" y="0" fill="rgba(245, 247, 250, 0.3)" />
+                <use xlink:href="#onda-suave" x="48" y="3" fill="rgba(245, 247, 250, 0.5)" />
+                <use xlink:href="#onda-suave" x="48" y="5" fill="rgba(245, 247, 250, 0.7)" />
+                <use xlink:href="#onda-suave" x="48" y="7" fill="#F5F7FA" />
+            </g>
+        </svg>
+    </section>
+
+    <section id="monitoreo">
+        <h2 class="section-title reveal">Monitoreo en Tiempo Real</h2>
+        <div class="mapa-container reveal">
+            <div id="mapa" class="mapa-visual"></div>
+            <div class="sismos-lista">
+                <h3 style="margin-bottom: 20px;">Últimos Reportes</h3>
+                <button id="btn-alertas" class="btn btn-secondary" style="margin-bottom: 12px; width: 90%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🔇 Alertas Sonoras Desactivadas
+                </button>
+                <div id="lista-sismos-dinamica"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="info" class="blanco-bg">
+        <h2 class="section-title reveal">Guía de Supervivencia</h2>
+        
+        <div class="info-grid reveal">
+            <div class="info-card">
+                <div class="card-icon">🎒</div>
+                <h3>Antes del Sismo</h3>
+                <ul>
+                    <li>Identifica las rutas de evacuación.</li>
+                    <li>Prepara tu kit de emergencias.</li>
+                    <li>Asegura muebles altos a la pared.</li>
+                </ul>
+            </div>
+            
+            <div class="info-card destacado">
+                <div class="card-icon">⚠️</div>
+                <h3>Durante el Sismo</h3>
+                <ul>
+                    <li>Mantén la calma, no corras.</li>
+                    <li>Aléjate de ventanas y espejos.</li>
+                    <li>Agáchate, cúbrete y sujétate.</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <div class="card-icon">🤝</div>
+                <h3>Después del Sismo</h3>
+                <ul>
+                    <li>Usa las escaleras, nunca el ascensor.</li>
+                    <li>Cierra llaves de gas y agua.</li>
+                    <li>Usa mensajes de texto, no satures las llamadas.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="recursos-grid reveal">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Guía de Acción" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="descargas-container">
+                <h3>Recursos Oficiales</h3>
+                <p>Descarga el material avalado por Protección Civil para tenerlo siempre a la mano, incluso sin internet.</p>
+                <a href="#" class="btn btn-primary" style="display: block; text-align: center;">📄 Plan Familiar (PDF)</a>
+                <a href="#" class="btn btn-secondary" style="display: block; text-align: center;">📄 Primeros Auxilios (PDF)</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="juegos" class="juego-bg">
+        <h2 class="section-title reveal">Centro de Preparación Interactiva</h2>
+        
+        <div id="selector-juegos" class="reveal">
+            <div class="juego-card-expanded" onclick="abrirJuego('botiquin')">
+                <div class="juego-info">
+                    <div class="icono-juego">🎒</div>
+                    <div class="texto-explicativo">
+                        <h3>Arma tu Botiquín (Contrarreloj)</h3>
+                        <p>Tienes solo 30 segundos antes de tener que evacuar. Los objetos en la habitación cambiarán cada vez que juegues. Arrastra a tu mochila 6 objetos vitales antes de que el tiempo se agote. El peso muerto y los objetos inútiles te costarán valiosos segundos.</p>
+                    </div>
+                </div>
+                <div class="juego-accion">
+                    <span class="btn btn-secondary">Jugar Ahora</span>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Inicio -->
-        <section id="inicio" class="section bg-light">
-            <div class="container">
-                <h2>Inicio</h2>
-                <div class="grid">
-                    <div class="card">
-                        <div class="icon">📚</div>
-                        <h3>Educación</h3>
-                        <p>Aprende sobre la naturaleza de los terremotos y cómo prepararte adecuadamente.</p>
-                    </div>
-                    <div class="card">
-                        <div class="icon">🛡️</div>
-                        <h3>Prevención</h3>
-                        <p>Medidas preventivas que pueden salvar vidas antes, durante y después de un sismo.</p>
-                    </div>
-                    <div class="card">
-                        <div class="icon">🆘</div>
-                        <h3>Emergencia</h3>
-                        <p>Contactos y recursos de ayuda disponibles en caso de emergencia.</p>
-                    </div>
-                </div>
+        <div id="juego-botiquin" class="juego-escenario oculto">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="btn-volver" onclick="volverSelector()" style="margin: 0;">← Volver al Menú</button>
+                <div id="temporizador" class="temporizador">⏳ 30s</div>
             </div>
-        </section>
-
-        <!-- Contenidos -->
-        <section id="contenidos" class="section">
-            <div class="container">
-                <h2>Contenidos</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>¿Qué es un terremoto?</h3>
-                        <p>Los terremotos son movimientos bruscos de la corteza terrestre causados por la liberación de energía acumulada en las placas tectónicas.</p>
-                    </div>
-                    <div class="content-card">
-                        <h3>Escalas de medición</h3>
-                        <p>Conoce las diferentes escalas para medir la intensidad de los sismos: Richter y Mercalli.</p>
-                    </div>
-                    <div class="content-card">
-                        <h3>Zonas de riesgo</h3>
-                        <p>Identifica las áreas con mayor actividad sísmica y vulnerabilidad ante terremotos.</p>
-                    </div>
-                    <div class="content-card">
-                        <h3>Kit de emergencia</h3>
-                        <p>Elementos esenciales que debes tener preparados: agua, alimentos, linterna, radio, botiquín y documentos importantes.</p>
-                    </div>
+            
+            <div class="botiquin-ui">
+                <div class="mochila-zona" id="zona-mochila">
+                    <h3 style="color: white;">Mochila de Emergencia</h3>
+                    <p id="contador-botiquin" style="color: #aaa;">Objetos vitales: 0 / 6</p>
+                    <div class="mochila-grid" id="mochila-grid"></div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Videos Informativos -->
-        <section id="videos" class="section bg-light">
-            <div class="container">
-                <h2>Videos Informativos</h2>
-                <p class="section-subtitle">Aprende visualmente cómo prepararte y actuar ante un terremoto</p>
-                
-                <div class="videos-grid">
-                    <!-- Video 1 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="https://www.youtube.com/embed/XY0SIyuoqqQ" 
-                                title="Qué hacer antes durante y después de un sismo"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>🎯 Qué hacer antes, durante y después de un sismo</h3>
-                            <p>Guía completa con pasos esenciales para mantenerte seguro en cada fase de un terremoto.</p>
-                        </div>
-                    </div>
-
-                    <!-- Video 2 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="https://www.youtube.com/embed/4VaAXniIsvs" 
-                                title="Cómo preparar un kit de emergencia"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>🎒 Kit de emergencia para terremotos</h3>
-                            <p>Aprende qué elementos debe contener tu mochila de emergencia y cómo organizarla correctamente.</p>
-                        </div>
-                    </div>
-
-                    <!-- Video 3 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="https://www.youtube.com/embed/f9h9EIuuWs8" 
-                                title="Simulacro de terremoto"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>🏫 Simulacro: Cómo practicar en familia</h3>
-                            <p>Realiza simulacros efectivos en casa y enseña a tu familia el protocolo de seguridad.</p>
-                        </div>
-                    </div>
-
-                    <!-- Video 4 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="https://www.youtube.com/embed/GdbNfwoj5Kg" 
-                                title="Primeros auxilios básicos"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>⛑️ Primeros auxilios en emergencias</h3>
-                            <p>Técnicas básicas de primeros auxilios que pueden salvar vidas después de un sismo.</p>
-                        </div>
-                    </div>
-
-                    <!-- Video 5 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="WhatsApp Video 2025-10-23 at 2.51.58 PM.mp4" 
-                                title="Cómo proteger tu hogar"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>🏠 Protege tu hogar contra terremotos</h3>
-                            <p>Medidas preventivas para asegurar muebles y reforzar estructuras en tu vivienda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Video 6 -->
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <iframe 
-                                src="https://www.youtube.com/embed/AAoTE63s5no" 
-                                title="Explicación científica de los terremotos"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3>🌍 ¿Cómo y por qué ocurren los terremotos?</h3>
-                            <p>Explicación científica sobre el origen de los sismos y las placas tectónicas.</p>
-                        </div>
+                <div class="almacen-zona" id="zona-almacen">
+                    <h3 style="color: white;">Selecciona lo vital rápido</h3>
+                    <div class="almacen-grid" id="almacen-grid">
+                        <!-- Los items se generarán con JS -->
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Apoyo -->
-        <section id="apoyo" class="section bg-light">
-            <div class="container">
-                <h2>Apoyo</h2>
-                <div class="support-section">
-                    <div class="card">
-                        <h3>Recursos educativos</h3>
-                        <ul>
-                            <li>Videos instructivos sobre comportamiento durante sismos</li>
-                            <li>Guías descargables en PDF</li>
-                            <li>Simulacros y ejercicios de preparación</li>
-                            <li>Material didáctico para escuelas y comunidades</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h3>Organizaciones de ayuda</h3>
-                        <ul>
-                            <li>Cruz Roja</li>
-                            <li>Defensa Civil</li>
-                            <li>Sistemas de alerta temprana</li>
-                            <li>Grupos de voluntarios</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Notificación flotante -->
+    <div id="toast" class="toast-oculto"></div>
 
-        <!-- Consejos -->
-        <section id="consejos" class="section">
-            <div class="container">
-                <h2>Consejos</h2>
-                <div class="tips-container">
-                    <div class="tip-card before">
-                        <h3>🔵 Antes del terremoto</h3>
-                        <ul>
-                            <li>Identifica zonas seguras en tu hogar y trabajo</li>
-                            <li>Fija muebles pesados a las paredes</li>
-                            <li>Prepara un plan familiar de emergencia</li>
-                            <li>Ten listo un kit de emergencia</li>
-                            <li>Conoce las rutas de evacuación</li>
-                            <li>Participa en simulacros</li>
-                        </ul>
-                    </div>
-                    <div class="tip-card during">
-                        <h3>🟡 Durante el terremoto</h3>
-                        <ul>
-                            <li>Mantén la calma</li>
-                            <li>Si estás adentro: Agáchate, cúbrete y agárrate</li>
-                            <li>Protégete bajo una mesa o escritorio resistente</li>
-                            <li>Aléjate de ventanas y objetos que puedan caer</li>
-                            <li>Si estás afuera: Aléjate de edificios, árboles y cables</li>
-                            <li>Si vas conduciendo: Detente en un lugar seguro</li>
-                        </ul>
-                    </div>
-                    <div class="tip-card after">
-                        <h3>🔴 Después del terremoto</h3>
-                        <ul>
-                            <li>Verifica si hay heridos y presta primeros auxilios</li>
-                            <li>Revisa daños estructurales en tu vivienda</li>
-                            <li>Cierra las llaves de gas y agua si hay fugas</li>
-                            <li>Prepárate para réplicas</li>
-                            <li>Escucha información oficial por radio</li>
-                            <li>Evacua si las autoridades lo indican</li>
-                            <li>No propagues rumores</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contactos -->
-        <section id="contactos" class="section bg-light">
-            <div class="container">
-                <h2>Contactos de ayuda</h2>
-                <div class="contacts-grid">
-                    <div class="contact-card">
-                        <div class="contact-icon">🚨</div>
-                        <h3>Emergencias</h3>
-                        <p class="contact-number">911</p>
-                        <p>Número general de emergencias</p>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon">🚒</div>
-                        <h3>Bomberos</h3>
-                        <p class="contact-number">119</p>
-                        <p>Rescate y emergencias</p>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon">⛑️</div>
-                        <h3>Cruz Roja</h3>
-                        <p class="contact-number">132</p>
-                        <p>Asistencia médica y humanitaria</p>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon">🏛️</div>
-                        <h3>Defensa Civil</h3>
-                        <p class="contact-number">115</p>
-                        <p>Coordinación de emergencias</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Encuesta -->
-        <section id="encuesta" class="section">
-            <div class="container">
-                <h2>Encuesta</h2>
-                <div class="card survey-card">
-                    <h3>¿Estás preparado para un terremoto?</h3>
-                    <p>Ayúdanos a mejorar compartiendo tu nivel de preparación</p>
-                    <form class="survey-form">
-                        <div class="form-group">
-                            <label>¿Tienes un kit de emergencia preparado?</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="kit" value="si"> Sí</label>
-                                <label><input type="radio" name="kit" value="no"> No</label>
-                                <label><input type="radio" name="kit" value="parcial"> Parcialmente</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>¿Has participado en simulacros?</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="simulacro" value="si"> Sí</label>
-                                <label><input type="radio" name="simulacro" value="no"> No</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>¿Conoces las zonas seguras de tu hogar?</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="zonas" value="si"> Sí</label>
-                                <label><input type="radio" name="zonas" value="no"> No</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="submit-button">Enviar respuestas</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Todo sobre precaución en terremotos. Información para salvar vidas.</p>
-            <p>Mantente informado y preparado. La prevención salva vidas.</p>
+    <footer id="contacto" class="reveal">
+        <div>
+            <h3>Contactos Vitales</h3>
+            <ul>
+                <li>Línea Única: <span class="emergency-number">123</span></li>
+                <li>Defensa Civil: <span class="emergency-number">144</span></li>
+                <li>Cruz Roja: <span class="emergency-number">132</span></li>
+            </ul>
+        </div>
+        <div>
+            <h3>Enlaces Rápidos</h3>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#monitoreo">Mapa de Sismos</a></li>
+                <li><a href="#juegos">Juegos</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3>Fuentes Oficiales</h3>
+            <ul>
+                <li><a href="https://www.sgc.gov.co/sismos">SGC - Visor Sismos</a></li>
+                <li><a href="https://portal.gestiondelriesgo.gov.co/">UNGRD Colombia</a></li>
+            </ul>
         </div>
     </footer>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
+
+    <!-- Modal de Victoria Personalizado -->
+    <div id="modal-victoria" class="modal-oculto">
+        <div class="modal-contenido">
+            <div id="modal-icono" class="modal-icono">🏆</div>
+            <h2 id="modal-titulo">¡Felicidades!</h2>
+            <p id="modal-mensaje">Has completado el juego con éxito.</p>
+            <button id="modal-btn" class="btn btn-primary">Jugar de nuevo</button>
+        </div>
+    </div>
+
 </body>
 </html>
