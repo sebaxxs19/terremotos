@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SismoNauta | Monitoreo Sísmico y Prevención en Tiempo Real</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <span class="logo-dot"></span> SismoNauta
+            <span class="badge-en-vivo"><span class="live-dot-pulse"></span> EN VIVO</span>
+        </div>
+        
+        <nav class="navbar">
+            <div class="nav-links-desktop">
+                <a href="#monitoreo">Mapa en Vivo</a>
+                <a href="#guia-supervivencia">Guía de Supervivencia</a>
+                <a href="#juegos">Simuladores</a>
+            </div>
+            <button class="theme-toggle-btn" id="theme-toggle" aria-label="Cambiar modo claro/oscuro" title="Modo Claro / Oscuro">
+                <span class="theme-icon-sun">☀️</span>
+                <span class="theme-icon-moon">🌙</span>
+            </button>
+            <button class="menu-btn" id="menu-btn" aria-label="Abrir menú">☰</button>
+        </nav>
+
+        <div class="sidebar" id="sidebar">
+            <button class="close-btn" id="close-btn" aria-label="Cerrar menú">✖</button>
+            <div class="sidebar-header">
+                <span class="logo-dot"></span> SismoNauta
+            </div>
+            <a href="#inicio">Inicio</a>
+            <a href="#monitoreo">Mapa Sísmico en Vivo</a>
+            <a href="#guia-supervivencia">Guía de Supervivencia</a>
+            <a href="#juegos">Centro de Preparación</a>
+            <a href="#contacto">Información Institucional</a>
+        </div>
+        
+        <div class="overlay" id="overlay"></div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="hero-badge-tag reveal">
+            <span class="badge-dot-live"></span> Monitoreo en Tiempo Real · Educación y Prevención para Colombia
+        </div>
+        <h1 class="reveal">¿ESTÁS PREPARADO PARA EL PRÓXIMO SISMO?</h1>
+        <p class="reveal" style="transition-delay: 0.15s;">Monitoreo tectónico en tiempo real, sismógrafo interactivo y educación práctica para salvar vidas en Colombia. La preparación informada es tu mejor escudo.</p>
+        
+        <div class="seismic-waves-container">
+            <div class="wave-ring wave-1"></div>
+            <div class="wave-ring wave-2"></div>
+            <div class="wave-ring wave-3"></div>
+            <div class="wave-ring wave-4"></div>
+        </div>
+
+        <div class="reveal hero-actions" style="transition-delay: 0.3s; position: relative; z-index: 2;">
+            <a href="#monitoreo" class="btn btn-primary btn-radar">
+                <span class="btn-live-dot"></span> Ver Consola en Vivo
+            </a>
+            <a href="#juegos" class="btn btn-secondary">
+                🎮 Jugar y Aprender
+            </a>
+        </div>
+
+        <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="onda-suave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use xlink:href="#onda-suave" x="48" y="0" fill="rgba(11, 17, 26, 0.3)" />
+                <use xlink:href="#onda-suave" x="48" y="3" fill="rgba(11, 17, 26, 0.55)" />
+                <use xlink:href="#onda-suave" x="48" y="5" fill="rgba(11, 17, 26, 0.8)" />
+                <use xlink:href="#onda-suave" x="48" y="7" fill="#0b111a" />
+            </g>
+        </svg>
+    </section>
+
+    <!-- FRANJA DE DATOS: ESTILO INSTRUMENTO DE MONITOREO (NÚMEROS GIGANTES EN TERRACOTA) -->
+    <section class="franja-datos reveal">
+        <div class="franja-datos-inner">
+            <div class="franja-dato-card">
+                <div class="franja-num terracotta">2.500+</div>
+                <div class="franja-label">Eventos sísmicos anuales en el Nido de Bucaramanga</div>
+                <div class="franja-badge">Alta Sismicidad</div>
+            </div>
+            <div class="franja-dato-card">
+                <div class="franja-num terracotta">&lt; 2 min</div>
+                <div class="franja-label">Latencia promedio de consolidación y alerta</div>
+                <div class="franja-badge">Telemetría Rápida</div>
+            </div>
+            <div class="franja-dato-card">
+                <div class="franja-num terracotta">24/7</div>
+                <div class="franja-label">Monitoreo continuo interconectado SGC & USGS</div>
+                <div class="franja-badge">Red Activa</div>
+            </div>
+            <div class="franja-dato-card">
+                <div class="franja-num terracotta">100%</div>
+                <div class="franja-label">Cobertura de fallas activas y zonas de subducción</div>
+                <div class="franja-badge">Georreferenciado</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: CONSOLA DE SALA DE CONTROL Y MONITOREO EN TIEMPO REAL -->
+    <section id="monitoreo" class="seccion-consola">
+        <div class="consola-header-info reveal">
+            <div class="consola-badge-tag">
+                <span class="live-dot-pulse"></span> MONITOREO SÍSMICO EN TIEMPO REAL
+            </div>
+            <h2 class="section-title consola-titulo">Mapa Sísmico Interactivo de Colombia</h2>
+            <p class="consola-subtitulo">Visualiza los movimientos telúricos recientes en Colombia y el Nido Sísmico de Bucaramanga con telemetría en vivo.</p>
+        </div>
+
+        <div class="mapa-container consola-frame reveal">
+            <!-- Barra superior estilo consola de instrumento con Leyenda -->
+            <div class="consola-hud-bar">
+                <div class="hud-left">
+                    <span class="hud-indicator-dot"></span>
+                    <span class="hud-title">RADAR SÍSMICO EN VIVO</span>
+                    <span class="hud-station-tag">RED COLOMBIA · SGC / USGS</span>
+                </div>
+
+                <!-- Leyenda compacta y fija para los colores del mapa -->
+                <div class="mapa-leyenda-compacta" aria-label="Leyenda de magnitudes">
+                    <span class="leyenda-titulo">MAGNITUD:</span>
+                    <span class="leyenda-item item-leve" title="Magnitud menor a 3.5">
+                        <span class="leyenda-circulo circulo-leve"></span> Leve (&lt;3.5)
+                    </span>
+                    <span class="leyenda-item item-moderado" title="Magnitud entre 3.5 y 5.0">
+                        <span class="leyenda-circulo circulo-moderado"></span> Moderado (3.5–5)
+                    </span>
+                    <span class="leyenda-item item-fuerte" title="Magnitud mayor a 5.0">
+                        <span class="leyenda-circulo circulo-fuerte"></span> Fuerte (&gt;5)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Cuerpo principal de la consola: Mapa y Panel lateral -->
+            <div class="consola-screen-grid">
+                <!-- Visor del Mapa -->
+                <div class="mapa-wrapper">
+                    <div id="mapa" class="mapa-visual"></div>
+                    <div class="mapa-overlay-grid"></div>
+                    <div class="mapa-reticula-corners">
+                        <span class="reticula-tl"></span>
+                        <span class="reticula-tr"></span>
+                        <span class="reticula-bl"></span>
+                        <span class="reticula-br"></span>
+                    </div>
+                </div>
+
+                <!-- Panel Lateral de Sismos -->
+                <div class="sismos-lista consola-feed-panel">
+                    <!-- Cabecera de la lista con Switch de Instrumento -->
+                    <div class="feed-header">
+                        <div class="feed-titulo-box">
+                            <h3 class="feed-titulo">Últimos Reportes</h3>
+                            <span class="feed-live-dot" title="Telemetría en tiempo real"></span>
+                        </div>
+                        
+                        <!-- Toggle tipo switch de instrumento -->
+                        <div class="instrument-toggle-container">
+                            <label class="instrument-switch" title="Activar / Desactivar alerta sonora para nuevos sismos" for="check-alertas">
+                                <input type="checkbox" id="check-alertas">
+                                <span class="instrument-slider">
+                                    <span class="switch-state-icon state-off">🔇</span>
+                                    <span class="switch-state-icon state-on">🔔</span>
+                                </span>
+                            </label>
+                            <span class="instrument-toggle-label" id="label-alertas-sonoras">Alertas Off</span>
+                        </div>
+                    </div>
+
+                    <!-- Mini resumen antes de la lista larga -->
+                    <div id="resumen-sismos-24h" class="feed-summary-strip">
+                        <div class="summary-col">
+                            <span class="summary-label">Sismos 24h</span>
+                            <span class="summary-val" id="resumen-total">--</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-col">
+                            <span class="summary-label">Mag. más alta</span>
+                            <span class="summary-val terracotta" id="resumen-mag-max">--</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-col">
+                            <span class="summary-label">Más reciente</span>
+                            <span class="summary-val" id="resumen-reciente">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Transparencia de fuente -->
+                    <div class="fuente-transparencia-box">
+                        <span class="fuente-info-icon">ℹ️</span>
+                        <p class="fuente-info-text">Datos oficiales del <strong>Servicio Geológico Colombiano (SGC)</strong>, con respaldo de <strong>USGS</strong> si el servicio nacional no responde.</p>
+                    </div>
+
+                    <!-- Lista dinámica de sismos -->
+                    <div id="lista-sismos-dinamica" class="feed-cards-container">
+                        <!-- Generado por JavaScript con esqueletos de carga iniciales -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: GUÍA INTEGRAL DE SUPERVIVENCIA SÍSMICA -->
+    <section id="guia-supervivencia" class="reveal">
+        <div class="guia-header-wrapper">
+            <span class="guia-eyebrow">PREVENCIÓN Y ACCIÓN RÁPIDA</span>
+            <h2 class="section-title">Guía de Supervivencia Sísmica</h2>
+            <p class="section-subtitle">Medidas prácticas, claras y visuales para proteger a tu familia y comunidad antes, durante y después de un sismo.</p>
+            <span class="guia-checklist-hint">💡 Toca cada punto para marcarlo como listo y seguir tu progreso</span>
+        </div>
+
+        <!-- Navegación por Fases -->
+        <div class="guia-tabs">
+            <button class="tab-btn active" onclick="mostrarFase('fase-antes')">
+                <span class="tab-icon">🛡️</span> 1. Antes (Preparación)
+            </button>
+            <button class="tab-btn" onclick="mostrarFase('fase-durante')">
+                <span class="tab-icon">⚠️</span> 2. Durante (Respuesta)
+            </button>
+            <button class="tab-btn" onclick="mostrarFase('fase-despues')">
+                <span class="tab-icon">🤝</span> 3. Después (Recuperación)
+            </button>
+            <button class="tab-btn" onclick="mostrarFase('fase-especiales')">
+                <span class="tab-icon">🐾</span> 4. Casos Especiales y Mascotas
+            </button>
+        </div>
+
+        <!-- CONTENIDO FASE 1: ANTES DEL SISMO -->
+        <div id="fase-antes" class="fase-contenido activa">
+            <div class="guia-grid">
+                <!-- Card 1: Mitigación en el Hogar -->
+                <div class="guia-card card-hogar" data-categoria="coral">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-coral">🏠</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-coral">Espacio Seguro</span>
+                            <h3>Mitigación en el Hogar</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🪛</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Anclaje de Muebles</span>
+                                <p>Fija a la pared bibliotecas, armarios, televisores y calentadores con esquineros metálicos o correas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚪</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Rutas Despejadas</span>
+                                <p>Mantén pasillos, escaleras y accesos siempre libres de macetas, calzado u obstáculos de paso.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚰</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Llaves de Servicios</span>
+                                <p>Identifica y enseña a todos cómo cerrar las llaves principales de gas, agua y breakers de luz.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🪟</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Películas en Vidrios</span>
+                                <p>Instala láminas de seguridad en ventanales grandes para evitar esquirlas proyectadas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">💡 Regla de oro:</span>
+                        <span>Mueve los objetos pesados a los estantes inferiores.</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Plan Familiar de Emergencia -->
+                <div class="guia-card card-plan" data-categoria="blue">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-blue">📋</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-blue">Organización</span>
+                            <h3>Plan Familiar de Emergencia</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">👥</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Asignación de Roles</span>
+                                <p>Define quién cierra registros, quién lleva la mochila y quién apoya a niños o adultos mayores.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">📍</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Puntos de Encuentro</span>
+                                <p>Acuerda 2 puntos seguros: uno cerca al hogar (parque comunal) y otro exterior al barrio si acordonan.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">☎️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Directorio Impreso</span>
+                                <p>Anota en papel: <strong>123</strong> (Emergencias), <strong>119</strong> (Bomberos), <strong>132</strong> (Cruz Roja) y familiares.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">⏱️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Simulacro Semestral</span>
+                                <p>Practica la evacuación dos veces al año cronometrando el tiempo de salida con calma.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">📌 Recuerda:</span>
+                        <span>Las redes colapsan; acuerden un familiar puente fuera de la ciudad.</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Mochila de Emergencia 72 Horas -->
+                <div class="guia-card card-mochila" data-categoria="green">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-green">🎒</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-green">Autonomía 72h</span>
+                            <h3>Mochila de Emergencia</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">💧</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Agua y Raciones</span>
+                                <p>Mínimo 2 litros de agua por persona/día y alimentos no perecederos con abrelatas manual.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🩹</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Botiquín Médico</span>
+                                <p>Gasas estériles, vendas, alcohol, tijeras, suero oral y medicinas formuladas para 7 días.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">📻</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Luz e Información</span>
+                                <p>Linterna frontal, radio portátil AM/FM (con pilas de repuesto), silbato y navaja multiusos.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">📄</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Documentos Clave</span>
+                                <p>Fotocopias de cédulas, pólizas y escrituras en bolsas herméticas tipo zip-lock impermeables.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-chips-row">
+                        <span class="chip-item">💧 Agua 2L</span>
+                        <span class="chip-item">🥫 Enlatados</span>
+                        <span class="chip-item">🩹 Botiquín</span>
+                        <span class="chip-item">🔦 Linterna</span>
+                        <span class="chip-item">📻 Radio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO FASE 2: DURANTE EL SISMO -->
+        <div id="fase-durante" class="fase-contenido">
+            <div class="guia-alert-banner">
+                <div class="alert-icon-big">🛡️</div>
+                <div class="alert-text">
+                    <strong>REGLA DE ORO VITAL: ¡AGÁCHARSE, CUBRIRSE Y SUJETARSE!</strong>
+                    <span>No salgas corriendo mientras el suelo esté en movimiento. La mayoría de lesiones ocurren por tropiezos y objetos que caen.</span>
+                </div>
+            </div>
+
+            <div class="guia-grid">
+                <!-- Card 1: En Interiores -->
+                <div class="guia-card card-interiores" data-categoria="blue">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-blue">🏢</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-blue">Hogar y Oficina</span>
+                            <h3>En Espacios Interiores</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile highlight-green">
+                            <div class="tile-icon-bubble">🪑</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Bajo mesa resistente</span>
+                                <p>Ubícate bajo un escritorio firme y aférrate a una de sus patas hasta que el temblor cese.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile highlight-amber">
+                            <div class="tile-icon-bubble">🪟</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Aléjate de cristales</span>
+                                <p>Mantente a distancia segura de ventanales, espejos, marquesinas y muebles altos sin anclaje.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile highlight-red">
+                            <div class="tile-icon-bubble">🚫</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Cero ascensores o escaleras</span>
+                                <p>La energía puede cortarse al instante. Las escaleras son propensas a caídas durante el movimiento.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🧱</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Muros estructurales</span>
+                                <p>Si no hay mesa, cúbrete la cabeza e híncate pegado a una columna o muro maestro interior.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">✅ Clave:</span>
+                        <span>Mantén la calma y espera a que el sismo termine antes de evacuar.</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: En la Vía Pública o Vehículo -->
+                <div class="guia-card card-via" data-categoria="amber">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-amber">🚗</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-amber">Tránsito y Calle</span>
+                            <h3>En la Vía Pública o Vehículo</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚘</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Si vas conduciendo</span>
+                                <p>Reduce la velocidad paulatinamente y oríllate en zona abierta con luces intermitentes encendidas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile highlight-red">
+                            <div class="tile-icon-bubble">🌉</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Evita puentes y postes</span>
+                                <p>No te detengas debajo de puentes peatonales, cables de alta tensión ni árboles frondosos.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚶</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Como peatón</span>
+                                <p>Busca parques, plazas o explanadas libres de desprendimientos de fachadas o vidrios.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚌</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Transporte masivo</span>
+                                <p>Sujétate firmemente del pasamanos, permanece sentado y sigue la voz del conductor.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">⚠️ Vehículos:</span>
+                        <span>Permanece dentro del carro; la carrocería protege contra caídas de cables.</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Lugares Concurridos -->
+                <div class="guia-card card-lugares" data-categoria="purple">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-purple">🏬</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-purple">Alta Afluencia</span>
+                            <h3>Lugares Concurridos</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🛒</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Centros comerciales y cines</span>
+                                <p>No corras en masa a las salidas para evitar estampidas. Cúbrete al lado de mostradores sólidos.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🏫</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Aulas y Colegios</span>
+                                <p>Estudiantes bajo los pupitres de rodillas, cubriendo cabeza y sujetando firmemente las patas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚇</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Espacios Subterráneos</span>
+                                <p>En sótanos o parqueaderos, aléjate de rampas y resguárdate junto a columnas maestras gruesas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚪</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Salidas de Emergencia</span>
+                                <p>Ubica visualmente la señalización verde de evacuación para usarla con calma una vez cese el sismo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">🤝 Control:</span>
+                        <span>El pánico colectivo genera más lesiones que el temblor; camina con firmeza.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO FASE 3: DESPUÉS DEL SISMO -->
+        <div id="fase-despues" class="fase-contenido">
+            <div class="guia-grid">
+                <!-- Card 1: Evacuación y Verificación -->
+                <div class="guia-card card-evac" data-categoria="green">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-green">🚶‍♂️</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-green">Salida Segura</span>
+                            <h3>Evacuación y Verificación</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🩹</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Verifica Heridos</span>
+                                <p>Inspecciona rápidamente a quienes te rodean. Aplica primeros auxilios únicamente si estás capacitado.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🔒</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Cierre de Suministros</span>
+                                <p>Corta gas, energía y agua antes de salir para prevenir fugas, cortocircuitos o incendios secundarios.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">➡️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Baja por la Derecha</span>
+                                <p>Desciende escaleras en fila india pegado a la pared derecha, dejando libre el lado izquierdo a socorristas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">👟</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Calzado Resistente</span>
+                                <p>Usa zapatos cerrados con suela gruesa para protegerte de vidrios y escombros caídos en el suelo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">🎒 Acción:</span>
+                        <span>Toma tu mochila de emergencia ya preparada junto a la puerta principal.</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Evaluación del Entorno -->
+                <div class="guia-card card-entorno" data-categoria="coral">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-coral">🔍</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-coral">Diagnóstico</span>
+                            <h3>Evaluación del Entorno</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile highlight-red">
+                            <div class="tile-icon-bubble">⚡</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Grietas a 45° en columnas</span>
+                                <p>Las grietas diagonales profundas en columnas o vigas señalan daño estructural severo. Evacúa ya.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile highlight-amber">
+                            <div class="tile-icon-bubble">👃</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Fugas de Gas</span>
+                                <p>Si huele a gas o escuchas silbido, abre ventilación sin accionar interruptores eléctricos ni llamas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">⚠️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Atención a Réplicas</span>
+                                <p>En Santander, por la dinámica del Nido de Bucaramanga, las réplicas son habituales. Espera en zona segura.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🚧</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Peligro en Fachadas</span>
+                                <p>Aléjate de aleros, balcones, cornisas y cables colgantes que puedan desplomarse minutos después.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">⚠️ Norma:</span>
+                        <span>No reingreses a la edificación hasta contar con inspección técnica de bomberos.</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Comunicación Responsable -->
+                <div class="guia-card card-comunicacion" data-categoria="blue">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-blue">📱</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-blue">Redes y Noticias</span>
+                            <h3>Comunicación Responsable</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">💬</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Prioriza Texto (SMS / WhatsApp)</span>
+                                <p>Evita llamadas de voz continuas para no congestionar las líneas prioritarias de ambulancias.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🏛️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Fuentes Oficiales</span>
+                                <p>Infórmate y comparte únicamente comunicados de la UNGRD, Servicio Geológico Colombiano (SGC) o Alcaldía.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile highlight-red">
+                            <div class="tile-icon-bubble">🛑</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Cero Cadenas de Pánico</span>
+                                <p>Los sismos no se pueden predecir con fecha ni hora. Corta cualquier mensaje alarmista no verificado.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🔋</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Ahorro de Batería</span>
+                                <p>Pon el móvil en modo ahorro de energía y baja el brillo para asegurar comunicación prolongada.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">📞 Teléfonos:</span>
+                        <span>123 (Policía/Emergencias) · 119 (Bomberos) · 132 (Cruz Roja)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO FASE 4: CASOS ESPECIALES Y MASCOTAS -->
+        <div id="fase-especiales" class="fase-contenido">
+            <div class="guia-grid grid-dos-columnas">
+                <!-- Card 1: Personas con Discapacidad -->
+                <div class="guia-card card-especial" data-categoria="purple">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-purple">♿</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-purple">Accesibilidad</span>
+                            <h3>Personas con Discapacidad</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🧑‍🦼</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Usuarios en Silla de Ruedas</span>
+                                <p>Frena las ruedas de inmediato, inclínate hacia adelante sobre tus piernas y protege cabeza y cuello con un cojín pesado.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🦯</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Discapacidad Visual</span>
+                                <p>Mantén bastones y guías en sitios fijos. Familiariza la ruta de evacuación libre de muebles salientes.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">💡</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Discapacidad Auditiva</span>
+                                <p>Instala luces estroboscópicas sincronizadas con alarmas y acuerda señales visuales claras de alerta.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-card-footer">
+                        <span class="footer-tip-badge">🤝 Red de apoyo:</span>
+                        <span>Acuerda previamente con dos vecinos el protocolo de asistencia solidaria.</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Mascotas y Animales -->
+                <div class="guia-card card-mascotas" data-categoria="coral">
+                    <div class="guia-card-header">
+                        <div class="card-icon-badge badge-coral">🐾</div>
+                        <div class="card-header-text">
+                            <span class="card-categoria-pill cat-coral">Nuestros Compañeros</span>
+                            <h3>Protección de Mascotas</h3>
+                        </div>
+                    </div>
+                    <div class="guia-tiles-container">
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🐕</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Comportamiento en Sismos</span>
+                                <p>Los animales se asustan y pueden huir o morder por reflejo. No los forces mientras tiembla; deja que busquen refugio.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🎒</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Kit de Emergencia Mascota</span>
+                                <p>Guarda comida seca y agua para 3 días, plato plegable, correa resistente, manta y copia del carné de vacunas.</p>
+                            </div>
+                        </div>
+                        <div class="guia-tile">
+                            <div class="tile-icon-bubble">🏷️</div>
+                            <div class="tile-content">
+                                <span class="tile-label">Identificación Permanente</span>
+                                <p>Placa metálica siempre visible con nombre y dos números telefónicos legibles en su collar.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guia-chips-row">
+                        <span class="chip-item">🦴 Alimento 3d</span>
+                        <span class="chip-item">🦮 Correa</span>
+                        <span class="chip-item">🏷️ Placa ID</span>
+                        <span class="chip-item">📦 Guacal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE SIMULADORES Y JUEGOS -->
+    <section id="juegos" class="juego-bg">
+        <h2 class="section-title reveal">Centro de Preparación Interactiva</h2>
+        
+        <div id="selector-juegos" class="reveal">
+            <div class="juego-card-expanded" onclick="abrirJuego('botiquin')">
+                <div class="juego-info">
+                    <div class="icono-juego">🎒</div>
+                    <div class="texto-explicativo">
+                        <h3>Arma tu Botiquín (Contrarreloj)</h3>
+                        <p>Tienes solo 30 segundos antes de tener que evacuar. Los objetos en la habitación cambiarán cada vez que juegues. Arrastra a tu mochila 6 objetos vitales antes de que el tiempo se agote. El peso muerto y los objetos inútiles te costarán valiosos segundos.</p>
+                    </div>
+                </div>
+                <div class="juego-accion">
+                    <span class="btn btn-secondary">Jugar Ahora</span>
+                </div>
+            </div>
+
+            <div class="juego-card-expanded" onclick="abrirJuego('simulador')">
+                <div class="juego-info">
+                    <div class="icono-juego">🧠</div>
+                    <div class="texto-explicativo">
+                        <h3>Sismo Simulator (¿Qué harías?)</h3>
+                        <p>Aprende fallando. Te ponemos en situaciones de emergencia reales —en tu casa, tu carro, un centro comercial— y tú decides qué hacer. Si fallas, la pantalla tiembla y te explicamos por qué esa decisión es peligrosa. 6 escenarios aleatorios en cada partida.</p>
+                    </div>
+                </div>
+                <div class="juego-accion">
+                    <span class="btn btn-secondary">Jugar Ahora</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="juego-botiquin" class="juego-escenario oculto">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="btn-volver" onclick="volverSelector()" style="margin: 0;">← Volver al Menú</button>
+                <div id="temporizador" class="temporizador">⏳ 30s</div>
+            </div>
+            
+            <div class="botiquin-ui">
+                <div class="mochila-zona" id="zona-mochila">
+                    <h3>Mochila de Emergencia</h3>
+                    <p id="contador-botiquin" style="color: #94a3b8;">Objetos vitales: 0 / 6</p>
+                    <div class="mochila-grid" id="mochila-grid"></div>
+                </div>
+
+                <div class="almacen-zona" id="zona-almacen">
+                    <h3>Selecciona lo vital rápido</h3>
+                    <div class="almacen-grid" id="almacen-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="juego-simulador" class="juego-escenario oculto">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <button class="btn-volver" onclick="volverSelector()" style="margin: 0;">← Volver al Menú</button>
+                <div id="progreso-simulador" class="progreso-simulador">Escenario 1 / 6</div>
+            </div>
+            <div class="progreso-barra"><div id="progreso-barra-fill" class="progreso-barra-fill"></div></div>
+            <div class="simulador-ui">
+                <div id="tarjeta-escenario" class="tarjeta-escenario">
+                    <div id="escenario-icono" class="escenario-icono">🏬</div>
+                    <p id="escenario-texto" class="escenario-texto"></p>
+                    <div id="opciones-container" class="opciones-container"></div>
+                    <div id="feedback-simulador" class="feedback-simulador oculto"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notificación flotante Toast -->
+    <div id="toast" class="toast-oculto"></div>
+
+    <!-- SECCIÓN FOOTER INSTITUCIONAL COMO CUADRO FLOTANTE INDEPENDIENTE (INSPIRADO EN SGC) -->
+    <section class="footer-section" id="contacto">
+        <div class="footer-card reveal">
+            <!-- Encabezado Institucional con Logo Espiral SGC -->
+            <div class="footer-institution-header">
+                <div class="footer-inst-title-area">
+                    <h2>Servicio Geológico Colombiano</h2>
+                    <span class="inst-subtitle">Sede Principal · Monitoreo y Geociencias</span>
+                </div>
+                <div class="footer-inst-logo-badge">
+                    <svg class="footer-spiral-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Arcos concéntricos estilizados del logo SGC -->
+                        <path d="M50 10 A40 40 0 0 1 90 50" stroke="#84cc16" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M50 20 A30 30 0 0 1 80 50" stroke="#eab308" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M50 30 A20 20 0 0 1 70 50" stroke="#f97316" stroke-width="6" stroke-linecap="round"/>
+                        <!-- Espiral interior terracota/rojo -->
+                        <path d="M50 40 A10 10 0 0 1 60 50 A10 10 0 0 1 50 60 A20 20 0 0 1 30 50 A30 30 0 0 1 60 20" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="footer-inst-logo-text">
+                        <span>SERVICIO</span>
+                        <span>GEOLÓGICO</span>
+                        <span>COLOMBIANO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grilla en 2 Columnas con Datos de la Sede y Líneas Oficiales -->
+            <div class="footer-institutional-grid">
+                <!-- Columna Izquierda: Sede y Horarios -->
+                <div class="inst-column">
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Dirección:</span>
+                        <span class="inst-data-val">Diagonal 53 No. 34 - 53 Bogotá D.C., Colombia</span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Código postal:</span>
+                        <span class="inst-data-val">111321</span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Horario de atención sedes SGC:</span>
+                        <span class="inst-data-val">Lunes a viernes 8:00 a.m. a 5:00 p.m.</span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Horario de atención Museo Geológico Nacional:</span>
+                        <span class="inst-data-val">Martes a viernes de 9:00 a.m. a 4:00 p.m. y último sábado de cada mes de 10:00 a.m. a 4:00 p.m.</span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Teléfono conmutador:</span>
+                        <span class="inst-data-val">
+                            <a href="tel:+576012200200">+57(601) 220 0200</a> · 
+                            <a href="tel:+576012200100">+57(601) 220 0100</a> · 
+                            <a href="tel:+576012200000">+57(601) 220 0000</a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Líneas de Atención, Denuncias y Correos -->
+                <div class="inst-column">
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Línea anticorrupción y de atención al ciudadano y denuncias:</span>
+                        <span class="inst-data-val"><a href="tel:018000110842">01 - 8000 - 110842</a></span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Línea de atención 24 horas para emergencias radiológicas:</span>
+                        <span class="inst-alert-val"><a href="tel:+573173662793" style="color: inherit; text-decoration: none;">+57 317 366 2793</a></span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Correo institucional:</span>
+                        <span class="inst-data-val"><a href="mailto:radicacioncorrespondencia@sgc.gov.co">radicacioncorrespondencia@sgc.gov.co</a></span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Correo de notificaciones judiciales:</span>
+                        <span class="inst-data-val"><a href="mailto:notificacionesjudiciales@sgc.gov.co">notificacionesjudiciales@sgc.gov.co</a></span>
+                    </div>
+                    <div class="inst-data-group">
+                        <span class="inst-data-label">Correo información relacionada con medios de comunicación:</span>
+                        <span class="inst-data-val"><a href="mailto:medios@sgc.gov.co">medios@sgc.gov.co</a></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila: Síganos en nuestras redes (Idéntica a la imagen con nombres exactos) -->
+            <div class="footer-social-section">
+                <div class="footer-social-heading">Síganos en nuestras redes</div>
+                <div class="footer-social-pills-row">
+                    <a href="https://x.com/sgcol" target="_blank" rel="noopener noreferrer" class="inst-social-pill x-pill" title="X (Twitter) SGC">
+                        <svg class="pill-icon-svg" viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23.3 22H16.6l-5.2-6.8L5.4 22H2.3l8.1-9.3L1.5 2h6.9l4.7 6.2L18.9 2zm-1.2 18h1.7L7.4 3.9H5.6L17.7 20z"/></svg>
+                        <span>@sgcol</span>
+                    </a>
+                    <a href="https://www.instagram.com/serviciogeologicocolombiano" target="_blank" rel="noopener noreferrer" class="inst-social-pill insta-pill" title="Instagram SGC">
+                        <svg class="pill-icon-svg" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 3.3.15 4.8 1.7 5 5 .06 1.3.07 1.6.07 4.8 0 3.2 0 3.6-.07 4.9-.15 3.3-1.7 4.8-5 5-1.3.06-1.6.07-4.9.07-3.2 0-3.6 0-4.9-.07-3.3-.15-4.8-1.7-5-5C2.07 15.6 2.06 15.3 2.06 12c0-3.2 0-3.6.07-4.9.15-3.3 1.7-4.8 5-5C8.4 2.2 8.7 2.2 12 2.2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zm5.2-8.9a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg>
+                        <span>@serviciogeologicocolombiano</span>
+                    </a>
+                    <a href="https://www.facebook.com/sgcolombiano" target="_blank" rel="noopener noreferrer" class="inst-social-pill fb-pill" title="Facebook SGC">
+                        <svg class="pill-icon-svg" viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.25-1.5 1.55-1.5H16.8V3.7c-.28-.04-1.25-.12-2.37-.12-2.35 0-3.96 1.43-3.96 4.06v2.26H7.7v3.1h2.77V21h3.03z"/></svg>
+                        <span>@sgcolombiano</span>
+                    </a>
+                    <a href="https://www.linkedin.com/company/serviciogeologicocolombiano" target="_blank" rel="noopener noreferrer" class="inst-social-pill in-pill" title="LinkedIn SGC">
+                        <svg class="pill-icon-svg" viewBox="0 0 24 24"><path d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3.2a1.96 1.96 0 100 3.92 1.96 1.96 0 000-3.92zM20.45 20h-3.37v-5.6c0-1.34-.03-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96V20H9.68V8.5h3.24v1.57h.05c.45-.85 1.55-1.75 3.19-1.75 3.41 0 4.04 2.25 4.04 5.17V20z"/></svg>
+                        <span>@serviciogeologicocolombiano</span>
+                    </a>
+                    <a href="https://www.youtube.com/@ServicioGeologicoC" target="_blank" rel="noopener noreferrer" class="inst-social-pill yt-pill" title="YouTube SGC">
+                        <svg class="pill-icon-svg" viewBox="0 0 24 24"><path d="M21.6 7.2s-.2-1.5-.8-2.2c-.8-.9-1.7-.9-2.1-1C15.9 3.8 12 3.8 12 3.8h0s-3.9 0-6.7.2c-.4 0-1.3.1-2.1 1-.6.7-.8 2.2-.8 2.2S2.2 9 2.2 10.7v1.5c0 1.8.2 3.5.2 3.5s.2 1.5.8 2.2c.8.9 1.9.9 2.4 1 1.7.2 7.4.2 7.4.2s3.9 0 6.7-.2c.4 0 1.3-.1 2.1-1 .6-.7.8-2.2.8-2.2s.2-1.8.2-3.5v-1.5c0-1.8-.2-3.5-.2-3.5zM9.9 14.6V8.9l5.4 2.9-5.4 2.8z"/></svg>
+                        <span>@ServicioGeologicoC</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Fila Inferior con Enlaces Institucionales Oficiales -->
+            <div class="footer-bottom-grid">
+                <div class="footer-nav-links">
+                    <a href="https://www.sgc.gov.co" target="_blank" rel="noopener noreferrer">Nuestras sedes</a>
+                    <a href="https://www.sgc.gov.co" target="_blank" rel="noopener noreferrer">Políticas y cumplimiento legal</a>
+                    <a href="https://www.sgc.gov.co" target="_blank" rel="noopener noreferrer">Mapa del sitio</a>
+                    <a href="https://www.sgc.gov.co" target="_blank" rel="noopener noreferrer">Trabaja con nosotros</a>
+                    <a href="https://www.sgc.gov.co" target="_blank" rel="noopener noreferrer">Inicio de sesión</a>
+                </div>
+                <div class="footer-copy-text">
+                    SismoNauta · Monitoreo y Divulgación de Geociencias
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Modal de Victoria / Resultados -->
+    <div id="modal-victoria" class="modal-oculto">
+        <div class="modal-contenido">
+            <div id="modal-icono" class="modal-icono">🏆</div>
+            <h2 id="modal-titulo">¡Felicidades!</h2>
+            <p id="modal-mensaje">Has completado el ejercicio con éxito.</p>
+            <button id="modal-btn" class="btn btn-primary">Jugar de nuevo</button>
+        </div>
+    </div>
+
+</body>
+</html>
