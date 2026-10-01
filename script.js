@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     closeBtn.addEventListener('click', cerrarMenu);
     overlay.addEventListener('click', cerrarMenu);
 
-<<<<<<< HEAD
     // Cerrar el menú lateral automáticamente al pulsar en cualquier enlace
     const enlacesSidebar = sidebar.querySelectorAll('a');
     enlacesSidebar.forEach(enlace => {
@@ -44,8 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-=======
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
     // 2. ANIMACIÓN DE SCROLL
     const observerOptions = {
         root: null,
@@ -57,12 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
-<<<<<<< HEAD
                 if (entry.target.id === 'guia-supervivencia') {
                     animarTarjetasFase(entry.target.querySelector('.fase-contenido.activa'));
                 }
-=======
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
                 observer.unobserve(entry.target);
             }
         });
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const revealElements = document.querySelectorAll('.reveal');
     revealElements.forEach(el => observer.observe(el));
 
-<<<<<<< HEAD
     // 2.1 ANIMACIÓN DE ENTRADA ESCALONADA PARA LAS TARJETAS DE LA GUÍA
     const prefiereMenosMovimientoGuia = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -173,13 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
         maxZoom: 16
-=======
-    // 3. MAPA DE SISMOS (Leaflet)
-    const mapa = L.map('mapa').setView([4.5709, -74.2973], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '© OpenStreetMap | Datos: SGC / USGS'
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
     }).addTo(mapa);
 
     const urlSGCOriginal = 'https://geoapps.sgc.gov.co/arcgis/rest/services/Sismos/Sismos_recientes/MapServer/0/query?where=1=1&outFields=*&outSR=4326&f=geojson';
@@ -188,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let ultimoSismoId = null;
     let alertasActivadas = false;
-<<<<<<< HEAD
     let sismoSeleccionadoId = null;
     let tarjetaActivaElemento = null;
     const sonidoAlerta = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
@@ -210,24 +195,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnAlertasLegacy.style.backgroundColor = '#27ae60';
                 btnAlertasLegacy.style.color = '#fff';
             }
-=======
-    const sonidoAlerta = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-    const grupoMarcadores = L.layerGroup().addTo(mapa);
-    const btnAlertas = document.getElementById('btn-alertas');
-
-    btnAlertas.addEventListener('click', () => {
-        alertasActivadas = !alertasActivadas;
-        if (alertasActivadas) {
-            btnAlertas.innerHTML = '🔔 Alertas Sonoras Activadas';
-            btnAlertas.style.backgroundColor = '#27ae60';
-            btnAlertas.style.color = '#fff';
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
             sonidoAlerta.volume = 0;
             sonidoAlerta.play().then(() => {
                 sonidoAlerta.pause();
                 sonidoAlerta.currentTime = 0;
                 sonidoAlerta.volume = 1;
-<<<<<<< HEAD
             }).catch(e => console.log('Audio en espera de interacción'));
             mostrarToast('🔔 Alerta acústica de nuevos sismos activada');
         } else {
@@ -329,28 +301,6 @@ document.addEventListener('DOMContentLoaded', function() {
         magMaxEl.innerText = `M ${magMax}`;
 
         recienteEl.innerText = calcularTiempoTranscurrido(sismos[0].fecha);
-=======
-            }).catch(e => console.log('Audio bloqueado'));
-        } else {
-            btnAlertas.innerHTML = '🔇 Alertas Sonoras Desactivadas';
-            btnAlertas.style.backgroundColor = ''; 
-            btnAlertas.style.color = '';
-        }
-    });
-
-    function obtenerColor(magnitud) {
-        if (magnitud >= 5.0) return '#e74c3c';
-        if (magnitud >= 3.5) return '#e67e22';
-        return '#f1c40f';
-    }
-
-    function calcularTiempoTranscurrido(timestamp) {
-        const minutos = Math.floor((new Date() - new Date(timestamp)) / 1000 / 60);
-        if (minutos < 60) return `Hace ${minutos} minutos`;
-        const horas = Math.floor(minutos / 60);
-        if (horas < 24) return `Hace ${horas} horas`;
-        return `Hace ${Math.floor(horas / 24)} días`;
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
     }
 
     async function obtenerDatosNormalizados() {
@@ -361,24 +311,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!datosSGC.features || datosSGC.features.length === 0) throw new Error("SGC sin datos");
 
             return datosSGC.features.slice(0, 10).map(s => ({
-<<<<<<< HEAD
                 id: s.properties.OBJECTID || `sgc-${Math.random()}`,
                 lat: s.geometry.coordinates[1],
                 lng: s.geometry.coordinates[0],
                 mag: parseFloat(s.properties.MAGNITUD || s.properties.magnitud || 0).toFixed(1),
-=======
-                id: s.properties.OBJECTID,
-                lat: s.geometry.coordinates[1],
-                lng: s.geometry.coordinates[0],
-                mag: parseFloat(s.properties.MAGNITUD || s.properties.magnitud).toFixed(1),
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
                 lugar: s.properties.DEPARTAMENTO ? `${s.properties.MUNICIPIO}, ${s.properties.DEPARTAMENTO}` : (s.properties.MUNICIPIO || 'Colombia'),
                 prof: s.properties.PROFUNDIDAD || 'Superficial',
                 fecha: s.properties.FECHA_UTC || s.properties.FECHA,
                 fuente: 'SGC'
             }));
         } catch (error) {
-<<<<<<< HEAD
             console.warn("Fallo el SGC, cambiando a USGS como respaldo oficial...", error);
             try {
                 const resUSGS = await fetch(urlUSGS);
@@ -421,28 +363,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (circulo) {
             circulo.openPopup();
-=======
-            console.warn("Fallo el SGC, cambiando a USGS...", error);
-            const resUSGS = await fetch(urlUSGS);
-            const datosUSGS = await resUSGS.json();
-            const sismosColombia = datosUSGS.features.filter(s => s.properties.place && s.properties.place.toLowerCase().includes('colombia'));
-
-            return sismosColombia.slice(0, 10).map(s => ({
-                id: s.id,
-                lat: s.geometry.coordinates[1],
-                lng: s.geometry.coordinates[0],
-                mag: parseFloat(s.properties.mag).toFixed(1),
-                lugar: s.properties.place.replace(' of ', ' de ').replace(' W ', ' O ').replace(' NW ', ' NO ').replace(' SW ', ' SO '),
-                prof: s.geometry.coordinates[2].toFixed(1),
-                fecha: s.properties.time,
-                fuente: 'USGS'
-            }));
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
         }
     }
 
     async function cargarSismos() {
-<<<<<<< HEAD
         const contenedorLista = document.getElementById('lista-sismos-dinamica');
         if (!contenedorLista) return;
 
@@ -473,11 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     cargarSismos();
                 });
             }
-=======
-        const sismos = await obtenerDatosNormalizados();
-        if (!sismos || sismos.length === 0) {
-            document.getElementById('lista-sismos-dinamica').innerHTML = '<p style="padding: 10px;">No hay sismos recientes reportados.</p>';
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
             return;
         }
 
@@ -485,15 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (ultimoSismoId && ultimoSismoId !== sismoMasReciente.id) {
             if (alertasActivadas) sonidoAlerta.play().catch(() => {});
             mapa.flyTo([sismoMasReciente.lat, sismoMasReciente.lng], 7, { duration: 1.5 });
-<<<<<<< HEAD
             mostrarToast(`⚡ Nuevo sismo detectado: M ${sismoMasReciente.mag} en ${sismoMasReciente.lugar}`);
-=======
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
         }
         ultimoSismoId = sismoMasReciente.id;
 
         grupoMarcadores.clearLayers();
-<<<<<<< HEAD
         contenedorLista.innerHTML = '';
 
         sismos.forEach((sismo, index) => {
@@ -575,38 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Carga inicial y refresco cada 2 minutos
     mostrarEsqueletosCarga();
-=======
-        const contenedorLista = document.getElementById('lista-sismos-dinamica');
-        contenedorLista.innerHTML = '';
-
-        sismos.forEach((sismo, index) => {
-            const circulo = L.circleMarker([sismo.lat, sismo.lng], {
-                radius: sismo.mag * 3.5,            
-                fillColor: obtenerColor(sismo.mag),
-                color: '#000', weight: 1, opacity: 0.8, fillOpacity: 0.7
-            }).addTo(grupoMarcadores);
-
-            circulo.bindPopup(`<strong>Magnitud:</strong> M ${sismo.mag}<br><strong>Lugar:</strong> ${sismo.lugar}<br><strong>Profundidad:</strong> ${sismo.prof} km<br><small>Fuente: ${sismo.fuente}</small>`);
-
-            const card = document.createElement('div');
-            card.className = 'sismo-card';
-            card.style.animationDelay = `${index * 0.1}s`; 
-            card.innerHTML = `
-                <h4>${sismo.lugar} <span style="font-size: 10px; background: #eee; padding: 2px 4px; border-radius: 4px; float: right;">${sismo.fuente}</span></h4>
-                <p>Magnitud: ${sismo.mag} | Prof: ${sismo.prof} km</p>
-                <small>${calcularTiempoTranscurrido(sismo.fecha)}</small>
-            `;
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', () => {
-                mapa.flyTo([sismo.lat, sismo.lng], 8);
-                circulo.openPopup();
-            });
-
-            contenedorLista.appendChild(card);
-        });
-    }
-
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
     cargarSismos();
     setInterval(cargarSismos, 120000);
 
@@ -619,28 +502,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (juego === 'botiquin') {
             juegoBotiquin.classList.remove('oculto');
             iniciarJuegoContrarreloj(); // Inicia el temporizador
-<<<<<<< HEAD
         } else if (juego === 'simulador') {
             juegoSimulador.classList.remove('oculto');
             iniciarSimulador();
-=======
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
         }
     };
 
     window.volverSelector = function() {
         juegoBotiquin.classList.add('oculto');
-<<<<<<< HEAD
         juegoSimulador.classList.add('oculto');
         selectorJuegos.classList.remove('oculto');
         clearInterval(intervaloTemporizador); // Detiene el temporizador al salir
         juegoActivo = false;
         simuladorActivo = false;
-=======
-        selectorJuegos.classList.remove('oculto');
-        clearInterval(intervaloTemporizador); // Detiene el temporizador al salir
-        juegoActivo = false;
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
     };
 
     // 5. TOAST NOTIFICATIONS
@@ -838,7 +712,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-<<<<<<< HEAD
 
     // ==========================================
     // 7. JUEGO: SISMO SIMULATOR (¿QUÉ HARÍAS?)
@@ -1166,6 +1039,3 @@ window.mostrarFase = function(faseId) {
         if (botonActivo) botonActivo.classList.add('active');
     }
 };
-=======
-});
->>>>>>> a9e0a8f03b0e1a75f62d5db81f93eff2c00b5c80
